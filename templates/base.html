@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>upload files tools.</title>
+	    <link href="{% static '/assets/bootstrap-4.0.0-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+	    <link href="{% static '/assets/toastr/css/toastr.min.css' %}" rel="stylesheet" type="text/css" />
+	    <link href="{% static '/assets/css/page.css' %}" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+    {% block content %}
+    {% endblock content %}
+
+    <script src="{% static '/assets/jquery-3.5.1.js'%}"></script>
+    <script src="{% static '/assets/bootstrap-4.0.0-dist/js/bootstrap.min.js'%}"></script>
+    <script src="{% static '/assets/toastr/js/toastr.min.js'%}"></script>
+    <script src="{% static '/assets/js/store.js'%}"></script>
+    </body>
+    <footer>
+        <!--<h1>
+            this id footer
+        </h1>-->
+    </footer>
+</html>

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+<!--    samah test-->
+<!--    <div class="alert alert-primary" role="alert">-->
+<!--      A simple primary alert—check it out!-->
+<!--    </div>-->
+    <div class="row">
+        <div class="col col-lg-4">
+            <div class="card mt-3">
+              <h5 class="card-header">Upload Documents (pdf, pptx)</h5>
+              <div class="card-body">
+                <div class="card-text">
+                    <form id="form_upload" enctype="multipart/form-data">
+                        {% csrf_token %}
+                      <div class="form-group row">
+                          <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                            <input type="file" class="form-control-file" name="document" id="document"
+                                   accept="
+                                   application/vnd.openxmlformats-officedocument.presentationml.presentation,
+                                   application/pdf"/>
+                          </div>
+                          <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
+                              <button type="submit" id="addFile"
+                                      class="btn btn-primary mb-2">Submit</button>
+                          </div>
+                      </div>
+                    </form>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mt-3 pb-2">
+              <h5 class="card-header">Search in Documents</h5>
+              <div class="card-body">
+                <div class="card-text">
+                    <form id="searchForm">
+                        {% csrf_token %}
+                      <div class="form-group row">
+                          <div class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                            <input type="text" id="searchText" class="form-control" value="" placeholder="search for file"/>
+                          </div>
+                          <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                              <button type="submit" id="search"
+                              class="btn btn-primary">Search</button>
+                          </div>
+                      </div>
+                    </form>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div id="showDocuments" class="row mb-2"></div>
+<input type="hidden" id="crf" value="{{ csrf_token }}">
+</div>
+{% endblock content %}
