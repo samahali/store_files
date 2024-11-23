@@ -1,0 +1,17 @@
+.vscode/
+*.pyc
+*.pyo
+/__pycache__/
+**/__pycache__/**
+__pycache__
+.vscode
+env
+venv
+/env/
+/venv/
+.idea
+/.idea/
+/.idea/**
+db.sqlite3
+/media/
+/staticfiles/

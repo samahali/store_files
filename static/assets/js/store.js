@@ -25,7 +25,7 @@ $('#form_upload').submit(function(e){
         form.append("uploadedFile", uploadedFile);
         form.append("csrfmiddlewaretoken", csrf_token );
         $.ajax({
-            url: "/ajax/add_file/",
+            url: "/ajax/add-file/",
             type: 'POST',
             data: form,
             success: function (response) {

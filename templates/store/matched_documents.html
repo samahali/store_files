@@ -1,28 +1,27 @@
 <div class="col table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xs">
     <div class="card mt-3 pb-2">
-      <h5 class="card-header">Uploaded Documents</h5>
-      <div class="card-body">
-        <div class="card-text">
-            <table class="table">
-              <thead class="thead">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Document</th>
-                  <th scope="col">Uploaded at</th>
-                </tr>
-              </thead>
-              <tbody>
-              {% for obj in documents %}
-                <tr>
-                  <td>{{forloop.counter}}</td>
-                  <td><a href="{{ obj.document.url }}">{{ obj.document.name }}</a></td>
-                  <td>{{ obj.uploaded_at }}</td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
+        <h5 class="card-header">Uploaded Documents</h5>
+        <div class="card-body">
+            <div class="card-text">
+                <table class="table" aria-description="documents">
+                    <thead class="thead">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Uploaded at</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in documents %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{{ obj.document.url }}">{{ obj.document.name }}</a></td>
+                            <td>{{ obj.uploaded_at }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
     </div>
 </div>

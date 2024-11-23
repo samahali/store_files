@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:17.1-alpine
+    container_name: store-files-db
+    restart: always
+    env_file:
+      - db.env
+    volumes:
+      - data:/var/lib/postgresql/data/
+#      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: store-files-backend
+    command:
+      - sh
+      - -c
+      - "./entrypoint.sh"
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  data:

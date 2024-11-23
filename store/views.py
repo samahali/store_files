@@ -1,75 +1,70 @@
-from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Document
-from pptx import Presentation
-import os
-from django.conf import settings
-from PyPDF2 import PdfFileReader
+from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 
-class FilesViews:
-    def files_management(request):
-        return render(request, template_name="store/upload_files.html")
+from .selectores import search_in_docs
+from .services import save_file
 
-    def search_in_files(request):
-        try:
-            if request.method == 'POST':
-                searched_data =request.POST['search_file'].lower()
-                documents = Document.objects.all()
-                matched_documents=[]
-                for document in documents:
-                    if searched_data in document.document.name.split('/')[1].lower():
-                        matched_documents +=[document]
-                        continue
-                    pdf_path = os.path.join(settings.MEDIA_ROOT, document.document.name)
-                    if pdf_path.endswith('.pdf'):
-                        search_in_file = FilesViews.search_in_pdf_file(pdf_path, searched_data)
-                        if search_in_file:
-                            matched_documents += [document]
-                            continue
-                    elif pdf_path.endswith('.pptx'):
-                        search_in_file = FilesViews.search_in_pptx_file(pdf_path, searched_data)
-                        if search_in_file:
-                            matched_documents += [document]
-                            continue
-                if matched_documents:
-                    return render(request, template_name="store/matched_documents.html", context={'documents': matched_documents})
-                else:
-                    return JsonResponse({'error':True,'message':'No items match your search.'})
-        except Exception as e:
-            return JsonResponse({'error':True,'message':'an application error has occurred, please contact your administrator.'})
-    @staticmethod
-    def search_in_pdf_file(pdf_path,searched_data):
-        pdfFileObj = open(pdf_path, 'rb')
-        pdfReader = PdfFileReader(pdfFileObj)
-        num_pages = pdfReader.numPages
-        count = 0
-        text = ""  # The while loop will read each page.
-        while count < num_pages:
-            pageObj = pdfReader.getPage(count)
-            count += 1
-            text += pageObj.extractText()
-            if searched_data in text.lower():
-                return True
-        return False
-    @staticmethod
-    def search_in_pptx_file(pdf_path,searched_data):
-        prs = Presentation(pdf_path)
-        for slide in prs.slides:
-            for shape in slide.shapes:
-                if hasattr(shape, "text") and searched_data in shape.text.lower():
-                    return True
-        return False
-    def add_file(request):
-        try:
-            if request.method == 'POST':
-                message = {"message":"Document Was Saved Successfully"}
-                document_file = request.FILES['uploadedFile']
-                document_file_extension = document_file.name
-                if document_file_extension.endswith('.pptx') or document_file_extension.endswith('.pdf'):
-                    Document.objects.create(document=document_file)
-                else:
-                    message["message"] = "Sorry, Files with extension .pdf,pptx only Allowed to Upload"
-                    message['error'] = True
-                return JsonResponse(message)
-        except Exception as e:
-            return JsonResponse({'error':True,'message':'an application error has occurred, please contact your administrator.'})
+@require_http_methods(["GET"])
+def upload_files_page(request):
+    """
+    Renders the file upload page.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML page for file upload.
+    """
+    return render(request, template_name="store/upload_files.html")
+
+@require_http_methods(["POST"])
+def search_in_files(request):
+    """
+    Searches for specific data in uploaded documents.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML page with matched documents or a JSON response with an error message.
+    """
+    try:
+        searched_data =request.POST["search_file"].lower()
+        matched_documents= search_in_docs(searched_data)
+        if matched_documents:
+            return render(
+                request,
+                template_name="store/matched_documents.html",
+                context={"documents": matched_documents}
+            )
+        else:
+            return JsonResponse({
+                "error":True,"message":"No items match your search."
+            })
+    except Exception as e:
+        return JsonResponse({
+            "error":True,
+            "message":"an application error has occurred, please contact your administrator."
+        })
+
+@require_http_methods(["POST"])
+def add_file(request):
+    """
+    Adds a new file to the document storage.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the success or failure of the file upload.
+    """
+    try:
+        document_file = request.FILES["uploadedFile"]
+        message = save_file(document_file)
+        return JsonResponse(message)
+    except Exception as e:
+        return JsonResponse({
+            "error":True,
+            "message":"an application error has occurred, please contact your administrator."
+        })
